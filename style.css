@@ -1,0 +1,47 @@
+body {
+    margin: 10px;
+}
+
+.bd {
+    border: solid black 1px;
+    padding: 2px;
+}
+
+div.dateTable {
+    display: none;
+}
+div.info {
+    display: none;
+}
+
+h1 {
+    text-align: center;
+}
+
+.datePicker {
+    text-align: center;
+}
+
+.datePicker {
+    text-align: center;
+}
+
+.bd-left {
+    border-left: black solid 1px;
+}
+
+.bd-top {
+    border-top: black solid 1px;
+}
+
+.bd-btm {
+    border-bottom: black solid 1px;
+}
+
+.ctr {
+    text-align: center;
+}
+
+.cRed {
+    color: red;
+}
