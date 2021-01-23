@@ -121,8 +121,11 @@ const calculate = () => {
     let daysSinceEval = milliSecAtEval / 86400000;
     let weeksAtEval = Math.floor(daysSinceEval / 7);
     let daysAtEval = Math.floor(daysSinceEval - (weeksAtEval * 7));
-    document.querySelector("#weeksEval").textContent = weeksAtEval;
-    document.querySelector("#daysEval").textContent = daysAtEval;
+    let week = weeksAtEval == 1 ? "week" : "weeks"
+    let day = daysAtEval == 1 ? "day" : "days"
+    document.querySelector("#week").textContent = `${weeksAtEval} ${week} and ${daysAtEval} ${day}`;
+    // document.querySelector("#weeksEval").textContent = weeksAtEval;
+    // document.querySelector("#daysEval").textContent = daysAtEval;
 
     //calculating ETA Range
     let lowDueDate = moment(firstDate).add(1, "year").subtract(3, "months").subtract(7, "days").format("MM-DD-YYYY");
@@ -163,11 +166,14 @@ const calculate = () => {
     let lmpDaysSinceEval = lmpMilliSecAtEval / 86400000;
     let lmpWeeksAtEval = Math.floor(lmpDaysSinceEval / 7);
     let lmpDaysAtEval = Math.floor(lmpDaysSinceEval - (lmpWeeksAtEval * 7));
-    document.querySelector("#lmpWeeksEval").textContent = lmpWeeksAtEval;
-    document.querySelector("#lmpDaysEval").textContent = lmpDaysAtEval;
+    let lmpweek = lmpWeeksAtEval == 1 ? "week" : "weeks"
+    let lmpday = lmpDaysAtEval == 1 ? "day" : "days"
+    document.querySelector("#lmpweek").textContent = `${lmpWeeksAtEval} ${lmpweek} and ${lmpDaysAtEval} ${lmpday}`;
+    // document.querySelector("#lmpWeeksEval").textContent = lmpWeeksAtEval;
+    // document.querySelector("#lmpDaysEval").textContent = lmpDaysAtEval;
 
     //calculating Nagaele's Rule and LMP duedates
-    let nagRule = moment(lmp).subtract("3", "months").subtract("7", "days").add("1", "year").format("MM-DD-YYYY");
+    let nagRule = moment(lmp).subtract("3", "months").add("7", "days").add("1", "year").format("MM-DD-YYYY");
     let lmpETA = moment(lmp).add("280", "days").format("MM-DD-YYYY");
     document.querySelector("#nagETA").textContent = nagRule;
     document.querySelector("#lmpETA").textContent = lmpETA;
