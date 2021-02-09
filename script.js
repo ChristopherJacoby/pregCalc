@@ -11,6 +11,8 @@ let psub3;
 let psub4;
 let dateArr = [];
 let evalDate;
+let lmp;
+
 
 $(document).ready(function () {
     var now = new Date();
@@ -25,36 +27,50 @@ $(document).ready(function () {
 });
 
 const dateChange = () => {
+    lmp = moment(document.getElementById("lmpDateSelected").value);
     selDate = moment(document.getElementById("dateSelected").value);
-    p = moment(selDate).format("MM-DD-YYYY");
-    p1 = moment(p).add(1, 'days').format('MM-DD-YYYY');
-    p2 = moment(p).add(2, 'days').format('MM-DD-YYYY');
-    p3 = moment(p).add(3, 'days').format('MM-DD-YYYY');
-    psub1 = moment(p).subtract(1, 'days').format('MM-DD-YYYY');
-    psub2 = moment(p).subtract(2, 'days').format('MM-DD-YYYY');
-    psub3 = moment(p).subtract(3, 'days').format('MM-DD-YYYY');
-    psub4 = moment(p).subtract(4, 'days').format('MM-DD-YYYY');
-    document.getElementById("p").textContent = p;
-    document.getElementById("p-1").textContent = psub1;
-    document.getElementById("p-2").textContent = psub2;
-    document.getElementById("p-3").textContent = psub3;
-    document.getElementById("p-4").textContent = psub4;
-    document.getElementById("p1").textContent = p1;
-    document.getElementById("p2").textContent = p2;
-    document.getElementById("p3").textContent = p3;
     evalDate = moment(document.getElementById("evalDate").value).format("MM-DD-YYYY");
-    $("div.dateTable").removeClass("dateTable");
-    //Clearing Form and Array on selecting new date
-    dateArr = [];
-    $("div#infoHold").addClass("info");
-    document.getElementById("checka").checked = false;
-    document.getElementById("checkb").checked = false;
-    document.getElementById("checkc").checked = false;
-    document.getElementById("checkd").checked = false;
-    document.getElementById("checke").checked = false;
-    document.getElementById("checkf").checked = false;
-    document.getElementById("checkg").checked = false;
-    document.getElementById("checkh").checked = false;
+    //26208000000 - 10 months in milliseconds
+    if (Date.parse(lmp) > Date.parse(selDate)) {
+        alert("The Peak Date needs to be after the LMP.");
+        document.querySelector("#lmpDateSelected").value = '';
+        document.querySelector("#dateSelected").value = '';
+    } else if (Date.parse(evalDate) < Date.parse(selDate)) {
+        alert("The Date of Evaluation needs to be after the Peak Date.");
+        document.querySelector("#dateSelected").value = '';
+    } else if (Date.parse(evalDate) - 26208000000 > Date.parse(selDate)) {
+        alert("The Date of Evaluation can't be more than 10 months after the Peak Date.");
+        document.querySelector("#dateSelected").value = '';
+    } else {
+        p = moment(selDate).format("MM-DD-YYYY");
+        p1 = moment(p).add(1, 'days').format('MM-DD-YYYY');
+        p2 = moment(p).add(2, 'days').format('MM-DD-YYYY');
+        p3 = moment(p).add(3, 'days').format('MM-DD-YYYY');
+        psub1 = moment(p).subtract(1, 'days').format('MM-DD-YYYY');
+        psub2 = moment(p).subtract(2, 'days').format('MM-DD-YYYY');
+        psub3 = moment(p).subtract(3, 'days').format('MM-DD-YYYY');
+        psub4 = moment(p).subtract(4, 'days').format('MM-DD-YYYY');
+        document.getElementById("p").textContent = p;
+        document.getElementById("p-1").textContent = psub1;
+        document.getElementById("p-2").textContent = psub2;
+        document.getElementById("p-3").textContent = psub3;
+        document.getElementById("p-4").textContent = psub4;
+        document.getElementById("p1").textContent = p1;
+        document.getElementById("p2").textContent = p2;
+        document.getElementById("p3").textContent = p3;
+        $("div.dateTable").removeClass("dateTable");
+        //Clearing Form and Array on selecting new date
+        dateArr = [];
+        $("div#infoHold").addClass("info");
+        document.getElementById("checka").checked = false;
+        document.getElementById("checkb").checked = false;
+        document.getElementById("checkc").checked = false;
+        document.getElementById("checkd").checked = false;
+        document.getElementById("checke").checked = false;
+        document.getElementById("checkf").checked = false;
+        document.getElementById("checkg").checked = false;
+        document.getElementById("checkh").checked = false;
+    }
 }
 
 const calculate = () => {
@@ -95,21 +111,25 @@ const calculate = () => {
     let eDate = Date.parse(endDate);
     let loopDate = eDate + 86400000;
 
-    while (fDate <= loopDate) {
-        if (fDate == eDate) {
-            mRange = moment(fDate).format("MM-DD-YYYY");
-            break;
-        } else if (fDate > eDate) {
-            if (fDate % 2 == 0) {
+    if (fDate > Date.parse(p)) {
+        mRange = moment(fDate).format("MM-DD-YYYY");
+    } else {
+        while (fDate <= loopDate) {
+            if (fDate == eDate) {
                 mRange = moment(fDate).format("MM-DD-YYYY");
                 break;
-            } else {
-                mRange = moment(eDate).format("MM-DD-YYYY");
-                break;
+            } else if (fDate > eDate) {
+                if (fDate % 2 == 0) {
+                    mRange = moment(fDate).format("MM-DD-YYYY");
+                    break;
+                } else {
+                    mRange = moment(eDate).format("MM-DD-YYYY");
+                    break;
+                }
             }
+            fDate = fDate + 86400000;
+            eDate = eDate - 86400000;
         }
-        fDate = fDate + 86400000;
-        eDate = eDate - 86400000;
     }
     document.querySelector("#midRange").textContent = mRange;
 
@@ -159,7 +179,6 @@ const calculate = () => {
     document.querySelector("#etamRange").textContent = etamRange;
 
     //Calculating LMP Date
-    let lmp = moment(document.getElementById("lmpDateSelected").value)
     let lmpAtEval = Date.parse(lmp);
     let lmpMilliSecAtEval = currentTime - lmpAtEval;
     //1 day has 86,400,00 milliseconds.
@@ -178,8 +197,14 @@ const calculate = () => {
     document.querySelector("#nagETA").textContent = nagRule;
     document.querySelector("#lmpETA").textContent = lmpETA;
 
+    //calculating Check in dates
+    const fiveMonths = moment(mRange).add("5", "months").format("MM-DD-YYYY");
+    const eightMonths = moment(mRange).add("8", "months").format("MM-DD-YYYY");
+    const tenMonths = moment(mRange).add("10", "months").format("MM-DD-YYYY");
+    document.querySelector("#checkInDates").innerHTML = `${fiveMonths}, ${eightMonths}, ${tenMonths}`
+
     //remove hidden class
-    if (dateArr.length > 0) {
+    if (dateArr.length > 0 && lmpAtEval) {
         $("div.info").removeClass("info");
     }
 }
